@@ -87,7 +87,7 @@ check_cxx_source_compiles("
 int main() { std::string str; return 0; }
 " HAVE_CXX17_HAS_INCLUDE)
 
-set(TINYDB_PUBLIC_INCLUDE_DIR "include/leveldb")
+set(TINYDB_PUBLIC_INCLUDE_DIR "include/tinydb")
 set(TINYDB_PORT_CONFIG_DIR "include/port")
 
 configure_file(
@@ -108,11 +108,29 @@ endif(BUILD_SHARED_LIBS)
 # Must be included before CMAKE_INSTALL_INCLUDEDIR is used.
 include(GNUInstallDirs)
 
+
+
 add_executable(tinydb "")
 target_sources(tinydb
   PRIVATE
     "${PROJECT_BINARY_DIR}/${TINYDB_PORT_CONFIG_DIR}/port_config.h"
     "db/main.cc"
+    "util/options.cc"
+    "util/status.cc"
+    "port/port.h"
+
+      # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
+      $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
+      "${TINYDB_PUBLIC_INCLUDE_DIR}/export.h"
+      "${TINYDB_PUBLIC_INCLUDE_DIR}/options.h"
+      "${TINYDB_PUBLIC_INCLUDE_DIR}/slice.h"
+        "${TINYDB_PUBLIC_INCLUDE_DIR}/env.h"
+)
+
+target_include_directories(tinydb
+      PUBLIC
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 
