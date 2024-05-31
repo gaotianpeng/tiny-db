@@ -25,6 +25,13 @@ endif(NOT CMAKE_CXX_STANDARD)
 option(TINYDB_BUILD_TESTS "Build tiny-db's unit tests" ON)
 option(TINYDB_INSTALL "Install tiny-db's header and library" ON)
 
+if (WIN32)
+  set(TINYDB_PLATFORM_NAME TINYDB_PLATFORM_WINDOWS)
+  add_definitions(-D_UNICODE -DUNICODE)
+else (WIN32)
+  set(TINYDB_PLATFORM_NAME TINYDB_PLATFORM_POSIX)
+endif (WIN32)
+
 include(CheckIncludeFile)
 check_include_file("unistd.h" HAVE_UNISTD_H)
 
@@ -118,6 +125,8 @@ target_sources(tinydb
     "util/options.cc"
     "util/status.cc"
     "port/port.h"
+    "port/port_stdcxx.h"
+    "port/thread_annotations.h"
 
       # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
       $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>
@@ -133,6 +142,20 @@ target_include_directories(tinydb
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+target_compile_definitions(tinydb
+        PRIVATE
+        # Used by include/export.h when building shared libraries.
+        TINYDB_COMPILE_LIBRARY
+        # Used by port/port.h.
+        ${TINYDB_PLATFORM_NAME}=1
+)
+
+if (NOT HAVE_CXX17_HAS_INCLUDE)
+  target_compile_definitions(leveldb
+          PRIVATE
+          TINYDB_HAS_PORT_CONFIG_H=1
+  )
+endif(NOT HAVE_CXX17_HAS_INCLUDE)
 
 
 
