@@ -122,6 +122,11 @@ target_sources(tinydb
   PRIVATE
     "${PROJECT_BINARY_DIR}/${TINYDB_PORT_CONFIG_DIR}/port_config.h"
     "db/main.cc"
+    "db/log_reader.h"
+    "db/log_reader.cc"
+    "db/log_writer.cc"
+    "db/log_writer.h"
+    "db/log_format.h"
     "util/options.cc"
     "util/status.cc"
     "port/port.h"
