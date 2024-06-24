@@ -61,7 +61,10 @@ Status Writer::AddRecord(const tinydb::Slice &slice) {
     return s;
 }
 
-Status Writer::EmitPhysicalRecord(RecordType type, const char* ptr, size_t length) {
+Status Writer::EmitPhysicalRecord(RecordType t, const char* ptr, size_t length) {
+    assert(length <= 0xffff);  // Must fit in two bytes
+    assert(block_offset_ + kHeaderSize + length <= kBlockSize);
+
     return Status::OK();
 }
 

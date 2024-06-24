@@ -117,7 +117,9 @@ include(GNUInstallDirs)
 
 
 
-add_executable(tinydb "")
+add_executable(tinydb ""
+        util/random.h
+        util/arena.h)
 target_sources(tinydb
   PRIVATE
     "${PROJECT_BINARY_DIR}/${TINYDB_PORT_CONFIG_DIR}/port_config.h"
@@ -127,11 +129,15 @@ target_sources(tinydb
     "db/log_writer.cc"
     "db/log_writer.h"
     "db/log_format.h"
-    "util/options.cc"
-    "util/status.cc"
+    "db/skiplist.h"
     "port/port.h"
     "port/port_stdcxx.h"
     "port/thread_annotations.h"
+    "util/arena.cc"
+    "util/arena.h"
+    "util/options.cc"
+    "util/random.h"
+    "util/status.cc"
 
       # Only CMake 3.3+ supports PUBLIC sources in targets exported by "install".
       $<$<VERSION_GREATER:CMAKE_VERSION,3.2>:PUBLIC>

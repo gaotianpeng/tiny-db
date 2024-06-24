@@ -91,6 +91,23 @@ private:
 
 }; // class Status
 
+inline Status::Status(const Status& rhs) {
+    state_ = (rhs.state_ == nullptr) ? nullptr : CopyState(rhs.state_);
+}
+
+inline Status &Status::operator=(const tinydb::Status &rhs) {
+    if (state_ != rhs.state_) {
+        delete[] state_;
+        state_ = (rhs.state_ == nullptr) ? nullptr : CopyState(rhs.state_);
+    }
+
+    return *this;
+}
+
+inline Status& Status::operator=(Status&& rhs) noexcept {
+    std::swap(state_, rhs.state_);
+    return *this;
+}
 
 } // namespace tinydb
 
